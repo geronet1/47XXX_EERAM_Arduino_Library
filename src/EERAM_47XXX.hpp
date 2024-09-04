@@ -60,12 +60,14 @@ class EERAM_47XXX {
     EERAM_47XXX(int address, IC_MEM_SIZE chipSize);
     EERAM_47XXX(bool A1, bool A2, IC_MEM_SIZE chipSize);
 
-    // Initialisation 
+    // Initialisation & basic functions
     void begin();
+    int getConfigAddress();
 
     // Configuration-related functions
     void writeConfigByte(int register_address, int payload);
     void writeStatus();
+    void clearConfig();
     int getConfigStatus(void);
     bool setWriteProtect(STATUS_WRITE_PROTECT_BITS wp_mode);
     void removeWriteProtect(void);
@@ -81,8 +83,8 @@ class EERAM_47XXX {
     MEMORY_OP_STATUS write(int addressPointer, uint8_t singleByte);
     MEMORY_OP_STATUS write(int addressPointer, uint8_t* dataArray, size_t arraySize, bool overwrite);
     uint8_t read();
-    uint8_t read(int addressPointer);
-    MEMORY_OP_STATUS read(int addressPointer, uint8_t* buffer, size_t byteCount);
+    uint8_t read(uint16_t addressPointer);
+    MEMORY_OP_STATUS read(uint16_t addressPointer, uint8_t* buffer, size_t byteCount);
   private:
     IC_MEM_SIZE m_chipSize;
     int m_config_address;

@@ -23,6 +23,10 @@ void EERAM_47XXX::begin() {
   getConfigStatus();
 }
 
+int EERAM_47XXX::getConfigAddress() {
+  return(m_config_address);
+}
+
 void EERAM_47XXX::writeConfigByte(int register_address, int payload) {
   Wire.beginTransmission(m_config_address);
   Wire.write(register_address);
@@ -32,6 +36,11 @@ void EERAM_47XXX::writeConfigByte(int register_address, int payload) {
 
 void EERAM_47XXX::writeStatus() {
   writeConfigByte(REG_CONFIG_ADDRESS::STATUS, m_config_status_register);
+}
+
+void EERAM_47XXX::clearConfig() {
+  m_config_status_register = 0;
+  writeStatus();
 }
 
 int EERAM_47XXX::getConfigStatus() {
@@ -61,7 +70,7 @@ void EERAM_47XXX::removeWriteProtect() {
 }
 
 void EERAM_47XXX::enableAutoStore() {
-  m_config_status_register = m_config_status_register & ~(0b1<<1) | m_config_status_register;
+  m_config_status_register = m_config_status_register & ~(0b1<<1) | 2; // 2 = 0b10
   writeStatus();
 }
 
@@ -97,7 +106,8 @@ MEMORY_OP_STATUS EERAM_47XXX::write(int addressPointer, uint8_t singleByte) {
   if(addressPointer < 0) {return(MEMORY_OP_STATUS::ADDRESS_DNE);}
   if(addressPointer >= m_chipSize) {return(MEMORY_OP_STATUS::ADDRESS_OVER);}
   Wire.beginTransmission(m_address);
-  Wire.write(addressPointer);
+  Wire.write(highByte(addressPointer));
+  Wire.write(lowByte(addressPointer));
   Wire.write(singleByte);
   Wire.endTransmission();
   return(MEMORY_OP_STATUS::WRITE_THEORY_OK);
@@ -108,7 +118,8 @@ MEMORY_OP_STATUS EERAM_47XXX::write(int addressPointer, uint8_t* dataArray, size
   if(addressPointer >= m_chipSize) {return(MEMORY_OP_STATUS::ADDRESS_OVER);}
   if(!overwrite && (addressPointer + arraySize) >= m_chipSize) {return(MEMORY_OP_STATUS::ADDRESS_ROLLOVER);}
   Wire.beginTransmission(m_address);
-  Wire.write(addressPointer);
+  Wire.write(highByte(addressPointer));
+  Wire.write(lowByte(addressPointer));
   for(int i=0; i<arraySize; i++) {Wire.write(dataArray[i]);}
   Wire.endTransmission();
   return(MEMORY_OP_STATUS::WRITE_THEORY_OK);
@@ -121,12 +132,13 @@ uint8_t EERAM_47XXX::read() {
   return(Wire.read());
 }
 
-uint8_t EERAM_47XXX::read(int addressPointer){
+uint8_t EERAM_47XXX::read(uint16_t addressPointer){
   if(addressPointer < 0) {return(MEMORY_OP_STATUS::ADDRESS_DNE);}
   if(addressPointer >= m_chipSize) {return(MEMORY_OP_STATUS::ADDRESS_OVER);}
 
   Wire.beginTransmission(m_address);
-  Wire.write(addressPointer);
+  Wire.write(highByte(addressPointer));
+  Wire.write(lowByte(addressPointer));
   Wire.endTransmission();
   Wire.requestFrom(m_address, 1);
   return(Wire.read());
@@ -136,13 +148,14 @@ uint8_t EERAM_47XXX::read(int addressPointer){
 * @brief Read an arbitrary number of bytes from memory
 * @warning Buffer should be at least the same size than byteCount, otherwise the program will crash
 */
-MEMORY_OP_STATUS EERAM_47XXX::read(int addressPointer, uint8_t* buffer, size_t byteCount=1) {
+MEMORY_OP_STATUS EERAM_47XXX::read(uint16_t addressPointer, uint8_t* buffer, size_t byteCount=1) {
   if(addressPointer < 0) {return(MEMORY_OP_STATUS::ADDRESS_DNE);}
   if(addressPointer >= m_chipSize) {return(MEMORY_OP_STATUS::ADDRESS_OVER);}
 
   size_t i(0);
   Wire.beginTransmission(m_address);
-  Wire.write(addressPointer);
+  Wire.write(highByte(addressPointer));
+  Wire.write(lowByte(addressPointer));
   Wire.endTransmission();
   Wire.requestFrom(m_address, byteCount);
   while(Wire.available()) {
