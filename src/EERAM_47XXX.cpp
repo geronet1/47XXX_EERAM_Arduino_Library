@@ -102,7 +102,7 @@ void EERAM_47XXX::memoryRecall() {
   writeConfigByte(REG_CONFIG_ADDRESS::COMMAND, COMMAND_EXEC::RECALL);
 }
 
-MEMORY_OP_STATUS EERAM_47XXX::write(int addressPointer, uint8_t singleByte) {
+MEMORY_OP_STATUS EERAM_47XXX::write(uint16_t addressPointer, uint8_t singleByte) {
   if(addressPointer < 0) {return(MEMORY_OP_STATUS::ADDRESS_DNE);}
   if(addressPointer >= m_chipSize) {return(MEMORY_OP_STATUS::ADDRESS_OVER);}
   Wire.beginTransmission(m_address);
@@ -113,7 +113,7 @@ MEMORY_OP_STATUS EERAM_47XXX::write(int addressPointer, uint8_t singleByte) {
   return(MEMORY_OP_STATUS::WRITE_THEORY_OK);
 }
 
-MEMORY_OP_STATUS EERAM_47XXX::write(int addressPointer, uint8_t* dataArray, size_t arraySize, bool overwrite) {
+MEMORY_OP_STATUS EERAM_47XXX::write(uint16_t addressPointer, uint8_t* dataArray, size_t arraySize, bool overwrite) {
   if(addressPointer < 0) {return(MEMORY_OP_STATUS::ADDRESS_DNE);}
   if(addressPointer >= m_chipSize) {return(MEMORY_OP_STATUS::ADDRESS_OVER);}
   if(!overwrite && (addressPointer + arraySize) >= m_chipSize) {return(MEMORY_OP_STATUS::ADDRESS_ROLLOVER);}

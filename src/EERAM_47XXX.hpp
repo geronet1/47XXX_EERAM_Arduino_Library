@@ -1,3 +1,4 @@
+#include <stdint.h>
 /**
  * @file        EERAM_47XXX.hpp
  * @brief       Header file for EERAM_47XXX Arduino Library
@@ -80,8 +81,8 @@ class EERAM_47XXX {
     void memoryRecall(void);
 
     // Memory storage related functions
-    MEMORY_OP_STATUS write(int addressPointer, uint8_t singleByte);
-    MEMORY_OP_STATUS write(int addressPointer, uint8_t* dataArray, size_t arraySize, bool overwrite);
+    MEMORY_OP_STATUS write(uint16_t addressPointer, uint8_t singleByte);
+    MEMORY_OP_STATUS write(uint16_t addressPointer, uint8_t* dataArray, size_t arraySize, bool overwrite);
     uint8_t read();
     uint8_t read(uint16_t addressPointer);
     MEMORY_OP_STATUS read(uint16_t addressPointer, uint8_t* buffer, size_t byteCount);
