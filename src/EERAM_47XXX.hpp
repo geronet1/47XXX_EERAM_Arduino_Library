@@ -17,8 +17,8 @@
 * @brief Enumerates the existing registers for configuring the 47XXX Memory Chip
 */
 typedef enum {
-  STATUS = 0x00, //!< Address of the \c STATUS register
-  COMMAND = 0x55 //!< \c COMMAND register, which can be used to either force store to or recall from EEPROM.
+  STATUS_REG = 0x00, //!< Address of the \c STATUS register
+  COMMAND_REG = 0x55 //!< \c COMMAND register, which can be used to either force store to or recall from EEPROM.
 } REG_CONFIG_ADDRESS;
 
 /**
