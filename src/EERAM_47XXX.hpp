@@ -70,7 +70,7 @@ class EERAM_47XXX {
     void writeStatus();
     void clearConfig();
     int getConfigStatus(void);
-    bool setWriteProtect(STATUS_WRITE_PROTECT_BITS wp_mode);
+    void setWriteProtect(STATUS_WRITE_PROTECT_BITS wp_mode);
     void removeWriteProtect(void);
     void enableAutoStore();
     void disableAutoStore();
@@ -87,9 +87,9 @@ class EERAM_47XXX {
     uint8_t read(uint16_t addressPointer);
     MEMORY_OP_STATUS read(uint16_t addressPointer, uint8_t* buffer, size_t byteCount);
   private:
+    int m_address;
     IC_MEM_SIZE m_chipSize;
     int m_config_address;
-    int m_address;
     bool m_wire_active;
     int m_config_status_register;
 };

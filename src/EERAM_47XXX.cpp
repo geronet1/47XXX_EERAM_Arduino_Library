@@ -52,7 +52,7 @@ int EERAM_47XXX::getConfigStatus() {
   return(m_config_status_register);
 }
 
-bool EERAM_47XXX::setWriteProtect(STATUS_WRITE_PROTECT_BITS wp_mode) {
+void EERAM_47XXX::setWriteProtect(STATUS_WRITE_PROTECT_BITS wp_mode) {
   uint8_t wp_bits = wp_mode << 2;
 
   if(!m_wire_active) {
